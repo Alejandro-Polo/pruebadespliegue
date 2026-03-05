@@ -67,6 +67,27 @@ resource "aws_instance" "docker_server" {
 
   vpc_security_group_ids = [aws_security_group.web_sg.id]
 
+ user_data = <<-EOF
+              #!/bin/bash
+
+              yum update -y
+              yum install -y docker git
+              systemctl start docker
+              systemctl enable docker
+
+              curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+              chmod +x /usr/local/bin/docker-compose
+
+              cd /home/ec2-user
+
+              git clone https://github.com/Alejandro-Polo/pruebadespliegue.git
+
+              cd pruebadespliegue
+
+              docker-compose up -d
+
+              EOF
+
   tags = {
     Name = "docker-ec2"
   }
