@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  database:
+    image: mysql:8.0
+    container_name: symfony-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: app_db
+      MYSQL_USER: symfony
+      MYSQL_PASSWORD: symfony
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  backend:
+    build: ./backend
+    container_name: symfony-backend
+    depends_on:
+      - database
+    environment:
+      DATABASE_URL: "mysql://symfony:symfony@database:3306/app_db"
+    volumes:
+      - ./backend:/var/www
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    container_name: react-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:

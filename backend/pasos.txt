@@ -1,0 +1,38 @@
+Pasos que se seguiran para completar esta primera parte del RA6
+
+Articulos:
+id(int)
+Nombre(string)
+Foto(string)
+Descripcion(string)
+Precio(int)
+Valoracion(1-5)
+
+Articulos se lanzara como una API para poder usarla en react
+
+CI -> como integracion continua se ejecutaran tests para el codigo se generara la documentacion del codigo y se procedera a la instalacion de symfony en el EC2 de AWS
+
+CD -> como despliege continuo una vez superados los tests con github actions se realizara la subida a una EC2 de AWS
+
+
+Crear la entidad 
+php bin/console make:entity Articulo
+
+Configuracion de la base de datos en .env
+DATABASE_URL="mysql://root:@127.0.0.1:3306/tiendabasica?serverVersion=8.0.32&charset=utf8mb4"
+
+Cración de la base de datos
+php bin/console doctrine:database:create
+
+migracion de la base de datos
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
+
+generaremos un crud para poder añadir y eliminar de nuestra lista de articulos 
+php bin/console make:crud Articulo
+
+se podra acceder a la cracion eliminacion de articulos desde la url de symfony mas un /articulo
+
+generacion del controlador que exportara los datos de la base de datos como un json , que posteriormente recojeremos en el front 
+php bin/console make:controller ApiArticuloController
+el json se podra ver en /api/articulos
