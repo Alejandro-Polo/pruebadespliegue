@@ -70,21 +70,21 @@ resource "aws_instance" "docker_server" {
  user_data = <<-EOF
               #!/bin/bash
 
-              apt update -y
-              apt install -y docker.io git
+              yum update -y
+              yum install -y docker git
               systemctl start docker
               systemctl enable docker
 
               curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
               chmod +x /usr/local/bin/docker-compose
 
-              cd /home/ubuntu
+              cd /home/ec2-user
 
               git clone https://github.com/Alejandro-Polo/pruebadespliegue.git
 
               cd pruebadespliegue
 
-              docker-compose up -d --build
+              docker-compose up -d
 
               EOF
 
