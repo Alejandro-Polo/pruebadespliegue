@@ -22,8 +22,6 @@ services:
       - database
     environment:
       DATABASE_URL: "mysql://symfony:symfony@database:3306/app_db"
-    volumes:
-      - ./backend:/var/www
     ports:
       - "8000:8000"
 

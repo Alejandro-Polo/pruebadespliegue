@@ -13,4 +13,4 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 EXPOSE 8000
 
-CMD composer install && php -S 0.0.0.0:8000 -t public
+CMD composer install && php bin/console doctrine:migrations:migrate --no-interaction && php -S 0.0.0.0:8000 -t public
