@@ -15,4 +15,4 @@ RUN composer install
 
 EXPOSE 8000
 
-CMD composer install && php bin/console doctrine:migrations:migrate --no-interaction && php -S 0.0.0.0:8000 -t public
+CMD sleep 15 && php bin/console doctrine:migrations:migrate --no-interaction && php -S 0.0.0.0:8000 -t public
