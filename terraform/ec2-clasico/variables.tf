@@ -7,5 +7,5 @@ variable "instance_type" {
 }
 
 variable "key_name" {
-  description = "docker-key"
+  description = "clasic-key"
 }
