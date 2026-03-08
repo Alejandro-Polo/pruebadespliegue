@@ -8,32 +8,50 @@ amazon-linux-extras install nginx1 -y
 systemctl enable nginx
 systemctl start nginx
 
-amazon-linux-extras enable php8.1
-yum clean metadata
-yum install -y php php-cli php-fpm php-mysqlnd php-json php-mbstring php-xml git unzip
+amazon-linux-extras install php8.1 -y
+
+yum install -y \
+php \
+php-cli \
+php-fpm \
+php-mysqlnd \
+php-json \
+php-mbstring \
+php-xml \
+php-intl \
+php-zip \
+php-opcache \
+git \
+unzip
 
 systemctl enable php-fpm
 systemctl start php-fpm
 
-amazon-linux-extras install nodejs18 -y
+curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -
+yum install -y nodejs
 
+node -v
+npm -v
 
 cd /tmp
 curl -sS https://getcomposer.org/installer -o composer-setup.php
 php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 
+composer -V
+
 yum install -y mariadb-server
 systemctl enable mariadb
 systemctl start mariadb
 
-sleep 10
+until mysqladmin ping --silent; do
+sleep 2
+done
 
 mysql -e "CREATE DATABASE IF NOT EXISTS symfony_db;"
 
-
 cd /home/ec2-user
-git clone https://github.com/Alejandro-Polo/pruebadespliegue.git
 
+git clone https://github.com/Alejandro-Polo/pruebadespliegue.git
 
 cd /home/ec2-user/pruebadespliegue/backend
 
@@ -42,6 +60,7 @@ sed -i 's|DATABASE_URL=.*|DATABASE_URL="mysql://root:@127.0.0.1:3306/symfony_db"
 composer install --no-interaction --no-progress
 
 php bin/console doctrine:migrations:migrate --no-interaction || true
+
 
 chmod o+x /home/ec2-user
 chmod -R 755 /home/ec2-user/pruebadespliegue
@@ -64,18 +83,17 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
-    # React
+    # React frontend
     location / {
         try_files $uri /index.html;
     }
 
-    # API Symfony
+    # Symfony API
     location /api {
         root /home/ec2-user/pruebadespliegue/backend/public;
         try_files $uri /index.php$is_args$args;
     }
 
-    # CRUD Symfony
     location /articulo {
         root /home/ec2-user/pruebadespliegue/backend/public;
         try_files $uri /index.php$is_args$args;
@@ -89,7 +107,9 @@ server {
         include fastcgi_params;
 
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
 
+        internal;
     }
 }
 EOF
