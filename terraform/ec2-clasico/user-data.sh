@@ -1,5 +1,7 @@
 #!/bin/bash
-set -e
+
+exec > /var/log/user-data.log 2>&1
+
 
 dnf update -y
 
@@ -23,6 +25,8 @@ dnf install -y mariadb105-server
 systemctl enable mariadb
 systemctl start mariadb
 
+sleep 10
+
 mysql -e "CREATE DATABASE symfony_db;"
 
 cd /home/ec2-user
@@ -34,7 +38,7 @@ cd pruebadespliegue
 cd backend
 composer install --no-interaction
 
-php bin/console doctrine:migrations:migrate --no-interaction
+php bin/console doctrine:migrations:migrate --no-interaction || true
 
 cd ../frontend
 npm install
