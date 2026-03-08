@@ -42,7 +42,7 @@ resource "aws_instance" "classic_ec2" {
 
   security_groups = [aws_security_group.web_sg.name]
 
-  user_data = file("${path.module}/user_data.sh")
+  user_data = file("${path.module}/user-data.sh")
 
   tags = {
     Name = "classic-react-symfony"
