@@ -23,7 +23,7 @@ mv composer.phar /usr/local/bin/composer
 
 cd /home/ec2-user
 
-git clone https://github.com/TU_USUARIO/TU_REPO.git
+git clone https://github.com/Alejandro-Polo/pruebadespliegue.git
 cd TU_REPO
 
 cd backend
