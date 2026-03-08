@@ -40,10 +40,10 @@ composer install --no-interaction
 php bin/console doctrine:migrations:migrate --no-interaction || true
 
 chown -R nginx:nginx /home/ec2-user/pruebadespliegue/backend
+chmod -R 755 /home/ec2-user/pruebadespliegue/backend
 chmod -R 775 /home/ec2-user/pruebadespliegue/backend/var
-cd ../frontend
 
-sed -i 's|http://backend:8000/api/articulos|/api/articulos|g' src/*.js || true
+cd ../frontend
 
 npm install
 npm run build
@@ -66,21 +66,21 @@ server {
 
     # API Symfony
     location /api {
-        root /home/ec2-user/pruebadespliegue/backend/public;
+        alias /home/ec2-user/pruebadespliegue/backend/public;
         try_files $uri /index.php$is_args$args;
     }
 
     # CRUD Symfony
     location /articulo {
-        root /home/ec2-user/pruebadespliegue/backend/public;
+        alias /home/ec2-user/pruebadespliegue/backend/public;
         try_files $uri /index.php$is_args$args;
     }
 
-    location ~ \.php$ {
+    location ~ ^/index\.php(/|$) {
         root /home/ec2-user/pruebadespliegue/backend/public;
         fastcgi_pass unix:/run/php-fpm/www.sock;
         include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param SCRIPT_FILENAME $document_root/index.php;
     }
 }
 EOF
