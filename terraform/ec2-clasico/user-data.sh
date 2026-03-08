@@ -1,35 +1,38 @@
 #!/bin/bash
+set -e
 
-yum update -y
+dnf update -y
 
-yum install -y nginx
-systemctl start nginx
+dnf install -y nginx
 systemctl enable nginx
+systemctl start nginx
 
-yum install -y php php-cli php-fpm php-mysqlnd git unzip
+dnf install -y php php-cli php-fpm php-mysqlnd php-json php-mbstring php-xml git unzip
 
-systemctl start php-fpm
 systemctl enable php-fpm
+systemctl start php-fpm
 
-yum install -y nodejs npm
+dnf install -y nodejs npm
 
-cd /home/ec2-user
-php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-php composer-setup.php
-mv composer.phar /usr/local/bin/composer
+cd /usr/local/bin
+curl -sS https://getcomposer.org/installer | php
+mv composer.phar composer
 
-yum install -y mariadb105-server
-systemctl start mariadb
+dnf install -y mariadb105-server
+
 systemctl enable mariadb
+systemctl start mariadb
 
 mysql -e "CREATE DATABASE symfony_db;"
 
 cd /home/ec2-user
+
 git clone https://github.com/Alejandro-Polo/pruebadespliegue.git
+
 cd pruebadespliegue
 
 cd backend
-composer install
+composer install --no-interaction
 
 php bin/console doctrine:migrations:migrate --no-interaction
 
