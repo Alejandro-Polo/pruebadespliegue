@@ -4,7 +4,7 @@ exec > /var/log/user-data.log 2>&1
 
 yum update -y
 
-yum install -y nginx
+amazon-linux-extras install -y nginx1
 systemctl enable nginx
 systemctl start nginx
 
@@ -22,27 +22,67 @@ curl -sS https://getcomposer.org/installer | php
 mv composer.phar composer
 
 yum install -y mariadb-server
-
 systemctl enable mariadb
 systemctl start mariadb
 
 sleep 10
-
 mysql -e "CREATE DATABASE symfony_db;"
 
 cd /home/ec2-user
 git clone https://github.com/Alejandro-Polo/pruebadespliegue.git
 
 cd pruebadespliegue/backend
+
+sed -i 's|DATABASE_URL=.*|DATABASE_URL="mysql://root:@127.0.0.1:3306/symfony_db"|g' .env
+
 composer install --no-interaction
 
 php bin/console doctrine:migrations:migrate --no-interaction || true
 
+chown -R nginx:nginx /home/ec2-user/pruebadespliegue/backend
+chmod -R 775 /home/ec2-user/pruebadespliegue/backend/var
 cd ../frontend
+
+sed -i 's|http://backend:8000/api/articulos|/api/articulos|g' src/*.js || true
+
 npm install
 npm run build
 
 rm -rf /usr/share/nginx/html/*
 cp -r dist/* /usr/share/nginx/html/
+
+cat > /etc/nginx/conf.d/app.conf <<'EOF'
+server {
+    listen 80;
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # React
+    location / {
+        try_files $uri /index.html;
+    }
+
+    # API Symfony
+    location /api {
+        root /home/ec2-user/pruebadespliegue/backend/public;
+        try_files $uri /index.php$is_args$args;
+    }
+
+    # CRUD Symfony
+    location /articulo {
+        root /home/ec2-user/pruebadespliegue/backend/public;
+        try_files $uri /index.php$is_args$args;
+    }
+
+    location ~ \.php$ {
+        root /home/ec2-user/pruebadespliegue/backend/public;
+        fastcgi_pass unix:/run/php-fpm/www.sock;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+}
+EOF
 
 systemctl restart nginx
