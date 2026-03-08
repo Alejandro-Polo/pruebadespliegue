@@ -2,27 +2,35 @@
 
 exec > /var/log/user-data.log 2>&1
 
-apt update -y
+yum update -y
 
-apt install -y nginx php php-cli php-fpm php-mysql php-mbstring php-xml php-curl git unzip nodejs npm mariadb-server
-
+yum install -y nginx
 systemctl enable nginx
 systemctl start nginx
 
-systemctl enable php8.1-fpm || systemctl enable php-fpm
-systemctl start php8.1-fpm || systemctl start php-fpm
+amazon-linux-extras enable php8.1
+yum clean metadata
+yum install -y php php-cli php-fpm php-mysqlnd php-json php-mbstring php-xml git unzip
 
-systemctl enable mariadb
-systemctl start mariadb
+systemctl enable php-fpm
+systemctl start php-fpm
 
-mysql -e "CREATE DATABASE symfony_db;"
+yum install -y nodejs npm
 
 cd /usr/local/bin
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar composer
 
-cd /home/ubuntu || cd /home/ec2-user
+yum install -y mariadb-server
 
+systemctl enable mariadb
+systemctl start mariadb
+
+sleep 10
+
+mysql -e "CREATE DATABASE symfony_db;"
+
+cd /home/ec2-user
 git clone https://github.com/Alejandro-Polo/pruebadespliegue.git
 
 cd pruebadespliegue/backend
@@ -34,7 +42,7 @@ cd ../frontend
 npm install
 npm run build
 
-rm -rf /var/www/html/*
-cp -r dist/* /var/www/html/
+rm -rf /usr/share/nginx/html/*
+cp -r dist/* /usr/share/nginx/html/
 
 systemctl restart nginx
