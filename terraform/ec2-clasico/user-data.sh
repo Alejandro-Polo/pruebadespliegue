@@ -1,5 +1,6 @@
 #!/bin/bash
 exec > /var/log/user-data.log 2>&1
+set -e
 
 yum update -y
 
@@ -16,6 +17,7 @@ systemctl start php-fpm
 
 amazon-linux-extras install nodejs18 -y
 
+
 cd /tmp
 curl -sS https://getcomposer.org/installer -o composer-setup.php
 php composer-setup.php --install-dir=/usr/local/bin --filename=composer
@@ -25,24 +27,27 @@ systemctl enable mariadb
 systemctl start mariadb
 
 sleep 10
-mysql -e "CREATE DATABASE symfony_db;"
+
+mysql -e "CREATE DATABASE IF NOT EXISTS symfony_db;"
+
 
 cd /home/ec2-user
 git clone https://github.com/Alejandro-Polo/pruebadespliegue.git
 
-cd pruebadespliegue/backend
+
+cd /home/ec2-user/pruebadespliegue/backend
 
 sed -i 's|DATABASE_URL=.*|DATABASE_URL="mysql://root:@127.0.0.1:3306/symfony_db"|g' .env
 
-composer install --no-interaction
+composer install --no-interaction --no-progress
 
 php bin/console doctrine:migrations:migrate --no-interaction || true
 
 chmod o+x /home/ec2-user
 chmod -R 755 /home/ec2-user/pruebadespliegue
-chown -R nginx:nginx /home/ec2-user/pruebadespliegue/backend/var
+chown -R nginx:nginx /home/ec2-user/pruebadespliegue/backend/var || true
 
-cd ../frontend
+cd /home/ec2-user/pruebadespliegue/frontend
 
 npm install
 npm run build
@@ -59,15 +64,18 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
+    # React
     location / {
         try_files $uri /index.html;
     }
 
+    # API Symfony
     location /api {
         root /home/ec2-user/pruebadespliegue/backend/public;
         try_files $uri /index.php$is_args$args;
     }
 
+    # CRUD Symfony
     location /articulo {
         root /home/ec2-user/pruebadespliegue/backend/public;
         try_files $uri /index.php$is_args$args;
@@ -76,9 +84,10 @@ server {
     location ~ ^/index\.php(/|$) {
 
         root /home/ec2-user/pruebadespliegue/backend/public;
-        fastcgi_pass unix:/run/php-fpm/www.sock;
 
+        fastcgi_pass unix:/run/php-fpm/www.sock;
         include fastcgi_params;
+
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
 
     }
