@@ -61,13 +61,14 @@ done
 mysql -e "CREATE DATABASE IF NOT EXISTS symfony_db;"
 
 cd /home/ec2-user
-git clone https://github.com/Alejandro-Polo/pruebadespliegue.git
+
+sudo -u ec2-user git clone https://github.com/Alejandro-Polo/pruebadespliegue.git /home/ec2-user/pruebadespliegue
 
 while [ ! -d "/home/ec2-user/pruebasdespliegue" ]; do
   sleep 2
 done
 
-chown -R ec2-user:ec2-user /home/ec2-user/pruebasdespliegue
+chown -R ec2-user:ec2-user /home/ec2-user/pruebadespliegue
 
 cd /home/ec2-user/pruebadespliegue/backend
 
