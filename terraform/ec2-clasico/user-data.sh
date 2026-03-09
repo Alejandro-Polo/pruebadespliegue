@@ -2,6 +2,9 @@
 exec > /var/log/user-data.log 2>&1
 set -e
 
+export HOME=/root
+export COMPOSER_HOME=/root/.composer
+
 yum update -y
 
 amazon-linux-extras install nginx1 -y
