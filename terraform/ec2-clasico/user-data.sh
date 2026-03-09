@@ -62,7 +62,7 @@ mysql -e "CREATE DATABASE IF NOT EXISTS symfony_db;"
 
 cd /home/ec2-user
 git clone https://github.com/Alejandro-Polo/pruebadespliegue.git
-chown -R ec2-user:ec2-user pruebasdespliegue
+chown -R ec2-user:ec2-user /home/ec2-user/pruebasdespliegue
 
 cd /home/ec2-user/pruebadespliegue/backend
 
