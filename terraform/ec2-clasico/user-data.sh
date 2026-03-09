@@ -28,7 +28,7 @@ unzip
 systemctl enable php-fpm
 systemctl start php-fpm
 
-curl -sL https://rpm.nodesource.com/setup_21.x | bash -
+curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -
 yum install -y nodejs
 
 node -v
@@ -55,7 +55,7 @@ git clone https://github.com/Alejandro-Polo/pruebadespliegue.git
 
 cd /home/ec2-user/pruebadespliegue/backend
 
-sed -i 's|DATABASE_URL=.*|DATABASE_URL="mysql://root:@127.0.0.1:3306/symfony_db"|g' .env
+sed -i 's|DATABASE_URL=.*|DATABASE_URL="mysql://root@127.0.0.1:3306/symfony_db"|g' .env
 
 composer install --no-interaction --no-progress
 
