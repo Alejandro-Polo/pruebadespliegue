@@ -28,7 +28,7 @@ unzip
 systemctl enable php-fpm
 systemctl start php-fpm
 
-curl -sL https://rpm.nodesource.com/setup_16.x | bash -
+curl -sL https://rpm.nodesource.com/setup_21.x | bash -
 yum install -y nodejs
 
 node -v
