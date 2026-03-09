@@ -27,14 +27,8 @@ unzip
 systemctl enable php-fpm
 systemctl start php-fpm
 
-cd /home/ec2-user
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-
-export NVM_DIR="/home/ec2-user/.nvm"
-source "$NVM_DIR/nvm.sh"
-
-nvm install 18
-nvm use 18
+curl -sL https://rpm.nodesource.com/setup_16.x | bash -
+yum install -y nodejs
 
 node -v
 npm -v
@@ -56,7 +50,6 @@ done
 mysql -e "CREATE DATABASE IF NOT EXISTS symfony_db;"
 
 cd /home/ec2-user
-
 git clone https://github.com/Alejandro-Polo/pruebadespliegue.git
 
 cd /home/ec2-user/pruebadespliegue/backend
@@ -73,9 +66,6 @@ chown -R nginx:nginx /home/ec2-user/pruebadespliegue/backend/var || true
 
 cd /home/ec2-user/pruebadespliegue/frontend
 
-export NVM_DIR="/home/ec2-user/.nvm"
-source "$NVM_DIR/nvm.sh"
-
 npm install
 npm run build
 
@@ -91,7 +81,7 @@ server {
     root /usr/share/nginx/html;
     index index.html;
 
-    # React frontend
+    # React
     location / {
         try_files $uri /index.html;
     }
