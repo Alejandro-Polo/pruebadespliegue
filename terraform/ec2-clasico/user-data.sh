@@ -27,9 +27,12 @@ unzip
 systemctl enable php-fpm
 systemctl start php-fpm
 
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-
 export NVM_DIR="/root/.nvm"
+mkdir -p $NVM_DIR
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | NVM_DIR=$NVM_DIR bash
+
+
 source /root/.nvm/nvm.sh
 
 nvm install 18
