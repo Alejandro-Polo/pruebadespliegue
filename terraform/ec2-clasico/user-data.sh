@@ -1,5 +1,4 @@
 #!/bin/bash
-export HOME=/root
 exec > /var/log/user-data.log 2>&1
 set -e
 
@@ -53,6 +52,7 @@ mysql -e "CREATE DATABASE IF NOT EXISTS symfony_db;"
 
 cd /home/ec2-user
 git clone https://github.com/Alejandro-Polo/pruebadespliegue.git
+chown -R ec2-user:ec2-user pruebasdespliegue
 
 cd /home/ec2-user/pruebadespliegue/backend
 
