@@ -28,7 +28,8 @@ unzip
 systemctl enable php-fpm
 systemctl start php-fpm
 
-curl -fsSL https://rpm.nodesource.com/setup_18.x | bash -
+amazon-linux-extras enable nodejs18
+yum clean metadata
 yum install -y nodejs
 
 node -v
