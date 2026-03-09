@@ -27,9 +27,13 @@ unzip
 systemctl enable php-fpm
 systemctl start php-fpm
 
-amazon-linux-extras enable nodejs18
-yum clean metadata
-yum install -y nodejs
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+export NVM_DIR="/root/.nvm"
+source /root/.nvm/nvm.sh
+
+nvm install 18
+nvm use 18
 
 node -v
 npm -v
