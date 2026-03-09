@@ -35,8 +35,8 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | NVM_D
 
 source /root/.nvm/nvm.sh
 
-nvm install 18
-nvm use 18
+nvm install 16
+nvm use 16
 
 node -v
 npm -v
