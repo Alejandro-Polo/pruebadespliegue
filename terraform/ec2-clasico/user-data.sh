@@ -9,7 +9,7 @@ amazon-linux-extras install nginx1 -y
 systemctl enable nginx
 systemctl start nginx
 
-amazon-linux-extras install php8.1 -y
+amazon-linux-extras install php8.2 -y
 
 yum install -y \
 php \
