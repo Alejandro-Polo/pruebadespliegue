@@ -1,4 +1,5 @@
 #!/bin/bash
+export HOME=/root
 exec > /var/log/user-data.log 2>&1
 set -e
 
@@ -54,7 +55,7 @@ git clone https://github.com/Alejandro-Polo/pruebadespliegue.git
 
 cd /home/ec2-user/pruebadespliegue/backend
 
-sed -i 's|DATABASE_URL=.*|DATABASE_URL="mysql://root@127.0.0.1:3306/symfony_db"|g' .env
+sed -i 's|DATABASE_URL=.*|DATABASE_URL="mysql://root:@127.0.0.1:3306/symfony_db"|g' .env
 
 composer install --no-interaction --no-progress
 
